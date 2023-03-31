@@ -1,0 +1,23 @@
+EN LA DOCUMENTACION TE RECOMIENDAN INSTALAR LO SIGUIENTE
+
+dotnet tool install --global dotnet-aspnet-codegenerator
+dotnet tool install --global dotnet-ef
+dotnet add package Microsoft.EntityFrameworkCore.Design
+dotnet add package Microsoft.EntityFrameworkCore.SQLite
+dotnet add package Microsoft.VisualStudio.Web.CodeGeneration.Design
+dotnet add package Microsoft.EntityFrameworkCore.SqlServe
+
+"dotnet-aspnet-codegenerator". 
+    Es para hacer scaffolding y esta incluye "Microsoft.VisualStudio.Web.CodeGeneration.Design" Es necesario instalar ambas
+
+"dotnet-ef  y... Microsoft.EntityFrameworkCore.Design"
+    Estas estan incluidas en "Microsoft.EntityFrameworkCore.Tools", por lo que se puede instalar solamente esta y 
+    no instalar las dos primeras
+
+    
+"dotnet add package Microsoft.EntityFrameworkCore.SQLite //// dotnet add package Microsoft.EntityFrameworkCore.SqlServe"
+    Esta de mas decir que solo instalaras la que vayas de acuerdo a la base de datos
+
+"dotnet-ef y dotnet-aspnet-codegenerator"
+    Si necesitas instalarlo de manera local, es necesario crear un manifiesto con el comando
+    < dotnet new tool-manifest > sin los "<>"
