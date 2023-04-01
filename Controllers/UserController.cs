@@ -50,7 +50,7 @@ namespace ToDoList.Controllers
             Debug.WriteLine("success", user.Full_Name, user.Password);
             if (result == PasswordVerificationResult.Success) Debug.WriteLine("success", user.Full_Name, user.Password);
 
-            return Ok( user );
+            return Ok(user);
         }
     }
 }
