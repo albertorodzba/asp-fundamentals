@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using ToDoList.Models;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 // builder.Services.AddSwaggerGen();
 //Dependency inyection
+builder.Services.AddScoped<IPasswordHasher<TodoUser>, PasswordHasher<TodoUser>>();
 builder.Services.AddDbContext<TodoContext>(options => options.UseMySQL(Environment.GetEnvironmentVariable("todoappstringconnection")));
 
 var app = builder.Build();
