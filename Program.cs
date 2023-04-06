@@ -1,9 +1,18 @@
 using Microsoft.EntityFrameworkCore;
-using ToDoList.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.Text;
+using ToDoList.Interfaces;
+using ToDoList.Models;
+using ToDoList.Services;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Host.ConfigureLogging(logging =>
+{
+    logging.ClearProviders();
+    logging.AddConsole();
+});
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -12,7 +21,18 @@ builder.Services.AddEndpointsApiExplorer();
 // builder.Services.AddSwaggerGen();
 //Dependency inyection
 builder.Services.AddScoped<IPasswordHasher<TodoUser>, PasswordHasher<TodoUser>>();
+builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddDbContext<TodoContext>(options => options.UseMySQL(Environment.GetEnvironmentVariable("todoappstringconnection")));
+
+
+//authentication Service
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(option => option.TokenValidationParameters = new TokenValidationParameters{
+        ValidateAudience = false,
+        ValidateIssuer = false,
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.Default.GetBytes("Hola mundo soy Mario"))
+    });
 
 var app = builder.Build();
 
@@ -25,6 +45,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
