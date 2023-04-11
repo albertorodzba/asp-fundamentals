@@ -11,6 +11,7 @@ namespace ToDoList.Models
     {
         public DbSet<TodoItem> TodoItems {get; set;}
         public DbSet<TodoUser> TodoUsers {get; set;}
+        public DbSet<TodoToken> TodoToken {get; set;}
 
         public TodoContext (DbContextOptions<TodoContext> options): base(options){}
 

@@ -6,6 +6,7 @@ using System.Text;
 using ToDoList.Interfaces;
 using ToDoList.Models;
 using ToDoList.Services;
+using ToDoList.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.ConfigureLogging(logging =>
@@ -24,7 +25,8 @@ builder.Services.AddScoped<IPasswordHasher<TodoUser>, PasswordHasher<TodoUser>>(
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddDbContext<TodoContext>(options => options.UseMySQL(Environment.GetEnvironmentVariable("todoappstringconnection")));
 
-
+//filters
+builder.Services.AddScoped<ManualAuthorizationAttribute>();
 //authentication Service
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(option => option.TokenValidationParameters = new TokenValidationParameters{
