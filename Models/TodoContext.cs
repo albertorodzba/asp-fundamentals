@@ -16,7 +16,9 @@ namespace ToDoList.Models
         public TodoContext (DbContextOptions<TodoContext> options): base(options){}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder){
-            modelBuilder.Entity<TodoItem>().Property(entity => entity.task_Created).HasDefaultValueSql("CURRENT_TIMESTAMP");
+            //The "CURRENT_TIMESTAMP" has problems with railway, the alternative to this is the code below
+            // modelBuilder.Entity<TodoItem>().Property(entity => entity.task_Created).HasDefaultValueSql("CURRENT_TIMESTAMP");
+            modelBuilder.Entity<TodoItem>().Property(entity => entity.task_Created).HasDefaultValue(DateTime.Now);
             modelBuilder.Entity<TodoItem>().Property(entity => entity.completed).HasDefaultValue(false);
 
             // modelBuilder.Entity<TodoUser>().Property(entity => entity.Item);
