@@ -9,6 +9,9 @@ using ToDoList.Services;
 using ToDoList.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
+
+string connectionString = Environment.GetEnvironmentVariable("MYSQL_URL");
+
 builder.Host.ConfigureLogging(logging =>
 {
     logging.ClearProviders();
@@ -23,7 +26,9 @@ builder.Services.AddEndpointsApiExplorer();
 //Dependency inyection
 builder.Services.AddScoped<IPasswordHasher<TodoUser>, PasswordHasher<TodoUser>>();
 builder.Services.AddScoped<IJwtService, JwtService>();
-builder.Services.AddDbContext<TodoContext>(options => options.UseMySQL(Environment.GetEnvironmentVariable("todoappstringconnection")));
+builder.Services.AddDbContext<TodoContext>(options => options.UseMySQL(connectionString));
+
+
 
 //filters
 builder.Services.AddScoped<ManualAuthorizationAttribute>();
