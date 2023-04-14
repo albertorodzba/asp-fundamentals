@@ -34,7 +34,8 @@ builder.Services.AddDbContext<TodoContext>(options => options.UseMySQL(connectio
 builder.Services.AddScoped<ManualAuthorizationAttribute>();
 //authentication Service
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(option => option.TokenValidationParameters = new TokenValidationParameters{
+    .AddJwtBearer(option => option.TokenValidationParameters = new TokenValidationParameters
+    {
         ValidateAudience = false,
         ValidateIssuer = false,
         ValidateIssuerSigningKey = true,
@@ -48,15 +49,14 @@ if (app.Environment.IsDevelopment())
 {
     // app.UseSwagger();
     // app.UseSwaggerUI();
-}else{
-    using (var scope = app.Services.CreateScope())
-{
-    var dbContext = scope.ServiceProvider
-        .GetRequiredService<TodoContext>();
-    
-    // Here is the migration executed
-    dbContext.Database.Migrate();
 }
+else
+{
+    await using var scope = app.Services.CreateAsyncScope();
+    var logger = scope.ServiceProvider.GetService<ILogger<Program>>();
+    logger.LogInformation($"StringConnection {connectionString}");
+    using var db = scope.ServiceProvider.GetService<TodoContext>();
+    await db.Database.MigrateAsync();
 }
 
 app.UseHttpsRedirection();
