@@ -11,8 +11,8 @@ using ToDoList.Models;
 namespace ToDoList.Migrations
 {
     [DbContext(typeof(TodoContext))]
-    [Migration("20230329021042_editedagain")]
-    partial class editedagain
+    [Migration("20230414224311_initialMigration")]
+    partial class initialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -27,7 +27,7 @@ namespace ToDoList.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("UserID")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.Property<bool>("completed")
@@ -36,9 +36,7 @@ namespace ToDoList.Migrations
                         .HasDefaultValue(false);
 
                     b.Property<DateTime>("task_Created")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime(6)")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("toDo")
                         .IsRequired()
@@ -46,9 +44,32 @@ namespace ToDoList.Migrations
 
                     b.HasKey("ID");
 
-                    b.HasIndex("UserID");
+                    b.HasIndex("UserId");
 
                     b.ToTable("TodoItems");
+                });
+
+            modelBuilder.Entity("ToDoList.Models.TodoToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("expirationTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("todoUserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("todoUserId");
+
+                    b.ToTable("TodoToken");
                 });
 
             modelBuilder.Entity("ToDoList.Models.TodoUser", b =>
@@ -77,17 +98,28 @@ namespace ToDoList.Migrations
             modelBuilder.Entity("ToDoList.Models.TodoItem", b =>
                 {
                     b.HasOne("ToDoList.Models.TodoUser", "User")
-                        .WithMany("Item")
-                        .HasForeignKey("UserID")
+                        .WithMany("Items")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("ToDoList.Models.TodoToken", b =>
+                {
+                    b.HasOne("ToDoList.Models.TodoUser", "todoUser")
+                        .WithMany()
+                        .HasForeignKey("todoUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("todoUser");
+                });
+
             modelBuilder.Entity("ToDoList.Models.TodoUser", b =>
                 {
-                    b.Navigation("Item");
+                    b.Navigation("Items");
                 });
 #pragma warning restore 612, 618
         }

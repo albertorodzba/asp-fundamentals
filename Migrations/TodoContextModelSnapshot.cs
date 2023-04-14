@@ -34,9 +34,7 @@ namespace ToDoList.Migrations
                         .HasDefaultValue(false);
 
                     b.Property<DateTime>("task_Created")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime(6)")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("toDo")
                         .IsRequired()
