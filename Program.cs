@@ -48,6 +48,15 @@ if (app.Environment.IsDevelopment())
 {
     // app.UseSwagger();
     // app.UseSwaggerUI();
+}else{
+    using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider
+        .GetRequiredService<TodoContext>();
+    
+    // Here is the migration executed
+    dbContext.Database.Migrate();
+}
 }
 
 app.UseHttpsRedirection();
