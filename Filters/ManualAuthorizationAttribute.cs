@@ -29,13 +29,14 @@ public class ManualAuthorizationAttribute : IActionFilter
     //BEFORE THE ACTION
     public async void OnActionExecuting(ActionExecutingContext context){
         
-        // this._logger.LogError("Entro al filtro");
+         this._logger.LogInformation("\nEntro al filtro");
         // string request;
         // using(StreamReader streamReader = new StreamReader(context.HttpContext.Request.Headers, Encoding.UTF8)){
         //     request = await streamReader.ReadToEndAsync();
         // }
         string bearerToken = context.HttpContext.Request.Headers.Authorization;
         if(bearerToken == null){
+            _logger.LogInformation("\n No se envío ningun token");
             // context.Result = new JsonResult(new {error = "Error al iniciar sesión"});
             context.Result = new UnauthorizedResult();
         }
@@ -48,17 +49,19 @@ public class ManualAuthorizationAttribute : IActionFilter
             try{
                 token = await this._DBcontext.TodoToken.SingleAsync(field => field.Token.Equals(bearerToken));
                 if (token.expirationTime < DateTime.Now){
+                    _logger.LogInformation("\n El token está caducado");
                     context.Result = new JsonResult(new {message = "token caducado, reinicie sesión"});
                 }
             }catch(Exception ex){
                 // context.Result = new UnauthorizedResult();
-                _logger.LogError(ex.ToString());
+                _logger.LogError($"{ex.ToString()}");
                 // Console.WriteLine($"EXCEPTION...{ex.ToString()}");
 
             }
 
             if(token == null){
                 // context.Result = new JsonResult(new {error = "Error al iniciar sesión"});
+                _logger.LogError("\n No se encontro el token en la base de datos");
                 context.Result = new UnauthorizedResult();
             }
             else{

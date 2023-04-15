@@ -27,7 +27,7 @@ namespace ToDoList.Controllers
             this._logger = logger;
         }
         // [Authorize]
-        // [ServiceFilter(typeof(ManualAuthorizationAttribute))]
+        [ServiceFilter(typeof(ManualAuthorizationAttribute))]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TodoUser>>> GetUsers()
         {
