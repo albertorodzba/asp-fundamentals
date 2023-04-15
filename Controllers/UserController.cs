@@ -41,7 +41,7 @@ namespace ToDoList.Controllers
         [HttpPost]
         public async Task<ActionResult<TodoUser>> AddUser(TodoUser user)
         {
-
+            this._logger.LogInformation($"\n  OBJETO ENTRANTE: {user.Email}, {user.Full_Name}, {user.Password}");
             string hashedPassword = _passwordHasher.HashPassword(user, user.Password);
             user.Password = hashedPassword;
             Debug.WriteLine(hashedPassword);
