@@ -42,6 +42,15 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.Default.GetBytes("Hola mundo soy Mario"))
     });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: "corsPolicy", policy =>
+    {
+        policy.WithOrigins("http://localhost:4200").AllowAnyHeader().AllowAnyMethod();
+    });
+}
+);
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -62,6 +71,8 @@ else
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
+
+app.UseCors("corsPolicy");
 app.UseAuthorization();
 
 app.MapControllers();

@@ -12,7 +12,7 @@ public class JwtService: IJwtService{
 
     //settings
     private string secretKey = "Hola mundo soy Mario"; //20
-    private int expireTime = 2;
+    private int expireTime = 10;
     private readonly ILogger _logger;
 
     public JwtService(ILogger<JwtService> logger){
@@ -36,7 +36,7 @@ public class JwtService: IJwtService{
         
         var securityToken = new JwtSecurityToken(
             claims: claims,
-            expires: DateTime.Now.AddMinutes(2),
+            expires: DateTime.Now.AddMinutes(expireTime),
             signingCredentials: credentials
         );
 

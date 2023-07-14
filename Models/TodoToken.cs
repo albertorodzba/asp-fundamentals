@@ -10,7 +10,7 @@ public class TodoToken{
 
     public string Token {get; set;}
 
-    public DateTime expirationTime {get; set;} = DateTime.Now;
+    public DateTime expirationTime {get; set;}
 
     public int todoUserId {get; set;}
     public TodoUser todoUser {get; set;}

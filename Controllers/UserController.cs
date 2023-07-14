@@ -37,7 +37,7 @@ namespace ToDoList.Controllers
             return Ok(users);
         }
 
-        
+
         [HttpPost]
         public async Task<ActionResult<TodoUser>> AddUser(TodoUser user)
         {
@@ -55,47 +55,54 @@ namespace ToDoList.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<login>> Login(login loginDto) //<-- make a dto for receive those parameters
         {
-            
-            TodoUser user =  await _context.TodoUsers.SingleAsync(e => e.Email.Equals(loginDto.Email));
+            TodoUser user = await _context.TodoUsers.SingleAsync(e => e.Email.Equals(loginDto.Email));
+            this._logger.LogInformation($"\n  OBJETO ENTRANTE: {user.Email}, {user.Full_Name}, {user.Password}");
             var result = _passwordHasher.VerifyHashedPassword(user, user.Password, loginDto.password);
             Debug.WriteLine("success", user.Full_Name, user.Password);
 
             if (result != PasswordVerificationResult.Success) return new UnauthorizedResult();
 
-            //if the user has an row with a token expired, update the row with a new token
-            TodoToken token ;
+            //if the user has a row with a token expired, update the row with a new token
+            TodoToken token;
             string jwt;
-            try{
+            try
+            {
 
                 token = await _context.TodoToken.FirstAsync(field => field.todoUserId == user.UserID);
 
-            }catch(Exception ex){
+            }
+            catch (Exception ex)
+            {
                 _logger.LogInformation("Creando token por primera vez");
-                jwt = _jwt.GenerateToken( user.UserID,  user.Email);
-                
+                jwt = _jwt.GenerateToken(user.UserID, user.Email);
+
                 //save on the database to authorize manually
                 TodoToken newToken = new TodoToken();
                 newToken.Token = jwt;
                 newToken.expirationTime = DateTime.Now.AddMinutes(2);
                 newToken.todoUserId = user.UserID;
                 await this._context.AddAsync(newToken);
-                await this._context.SaveChangesAsync(); 
+                await this._context.SaveChangesAsync();
+                HttpContext.Response.Headers.Add("Authorization", $"Bearer {jwt}");
                 return Ok(jwt);
             }
-            
-            if (token.expirationTime < DateTime.Now){
+
+            if (token.expirationTime < DateTime.Now)
+            {
                 _logger.LogInformation("El token expiro, creando uno nuevo...");
-                jwt = _jwt.GenerateToken( user.UserID,  user.Email);
+                jwt = _jwt.GenerateToken(user.UserID, user.Email);
                 token.expirationTime = DateTime.Now.AddMinutes(2);
                 token.Token = jwt;
                 this._context.Update(token);
                 await this._context.SaveChangesAsync();
+                HttpContext.Response.Headers.Add("Authorization", $"Bearer {jwt}");
                 return Ok(jwt);
             }
 
-            
+
             _logger.LogInformation("El token aun es válido, retornando el token almacenado");
-             return Ok(token.Token);
+            HttpContext.Response.Headers.Add("Authorization", $"Bearer {token.Token}");
+            return Ok(token.Token);
         }
     }
 }
